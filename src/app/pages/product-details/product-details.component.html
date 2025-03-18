@@ -1,0 +1,103 @@
+<div class="product-details-container">
+  <div class="back-link">
+    <a routerLink="/browse" class="back-btn">
+      <fa-icon [icon]="faArrowLeft"></fa-icon> Back to Browse
+    </a>
+  </div>
+  
+  @if (loading) {
+    <div class="loading-container">
+      <app-loading-spinner [message]="'Loading product details...'"></app-loading-spinner>
+    </div>
+  } @else if (!product) {
+    <div class="product-not-found">
+      <h2>Product Not Found</h2>
+      <p>The product you're looking for doesn't exist or has been removed.</p>
+      <a routerLink="/browse" class="browse-btn">Browse Products</a>
+    </div>
+  } @else {
+    <div class="product-details">
+      <div class="product-gallery">
+        <div class="main-image-container">
+          <img 
+            [src]="product.imageUrls[selectedImageIndex] || 'assets/images/placeholder.jpg'" 
+            [alt]="product.title" 
+            class="main-image"
+          >
+        </div>
+        
+        @if (product.imageUrls.length > 1) {
+          <div class="thumbnail-gallery">
+            @for (imageUrl of product.imageUrls; track imageUrl; let i = $index) {
+              <div 
+                class="thumbnail" 
+                [class.active]="selectedImageIndex === i" 
+                (click)="selectImage(i)"
+              >
+                <img [src]="imageUrl" [alt]="product.title + ' thumbnail ' + (i + 1)">
+              </div>
+            }
+          </div>
+        }
+      </div>
+      
+      <div class="product-info">
+        <h1 class="product-title">{{ product.title }}</h1>
+        
+        <div class="product-meta">
+          <span class="product-price">{{ formatPrice(product.price) }}</span>
+          <span class="product-condition">Condition: {{ product.condition | titlecase }}</span>
+          <span class="product-date">Listed on {{ formatDate(product.createdAt) }}</span>
+        </div>
+        
+        <div class="product-actions">
+          @if (!isSeller()) {
+            <button class="add-to-cart-btn" (click)="addToCart()">
+              <fa-icon [icon]="faShoppingCart"></fa-icon> Add to Cart
+            </button>
+          }
+          <button class="share-btn" (click)="shareProduct()">
+            <fa-icon [icon]="faShare"></fa-icon> Share
+          </button>
+        </div>
+        
+        <div class="product-description">
+          <h2 class="section-title">Description</h2>
+          <p>{{ product.description }}</p>
+        </div>
+        
+        @if (product.tags && product.tags.length > 0) {
+          <div class="product-tags">
+            @for (tag of product.tags; track tag) {
+              <span class="tag">{{ tag }}</span>
+            }
+          </div>
+        }
+        
+        <div class="seller-info">
+          <h2 class="section-title">Seller Information</h2>
+          <div class="seller-details">
+            <div class="seller-name">{{ product.sellerName }}</div>
+            @if (product.location) {
+              <div class="seller-location">Location: {{ product.location }}</div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Chat Section -->
+    @if (!isSeller()) {
+      <div class="chat-section">
+        <h2 class="section-title">Contact Seller</h2>
+        <app-chat [productId]="product.id" [sellerId]="product.sellerId"></app-chat>
+      </div>
+    }
+    
+    <!-- Related Products Section - This would be implemented in a real app -->
+    <div class="related-products">
+      <h2 class="section-title">Related Products</h2>
+      <p class="placeholder-message">Related products would be shown here in a real application.</p>
+    </div>
+  }
+</div>

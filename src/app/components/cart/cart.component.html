@@ -1,0 +1,79 @@
+<div class="cart-container">
+  <div class="cart-header">
+    <h2 class="cart-title">Your Shopping Cart</h2>
+    @if (cart.items.length > 0) {
+      <button class="clear-cart-btn" (click)="clearCart()">
+        <fa-icon [icon]="faTrash"></fa-icon> Clear Cart
+      </button>
+    }
+  </div>
+  
+  @if (cart.items.length === 0) {
+    <div class="empty-cart">
+      <p>Your cart is empty.</p>
+      <a routerLink="/browse" class="continue-shopping-btn">Continue Shopping</a>
+    </div>
+  } @else {
+    <div class="cart-items">
+      @for (item of cart.items; track item.product.id) {
+        <div class="cart-item">
+          <div class="item-image">
+            <img [src]="item.product.imageUrls[0] || 'assets/images/placeholder.jpg'" [alt]="item.product.title">
+          </div>
+          
+          <div class="item-details">
+            <h3 class="item-title">
+              <a [routerLink]="['/product', item.product.id]">{{ item.product.title }}</a>
+            </h3>
+            <p class="item-price">{{ formatPrice(item.product.price) }}</p>
+            <p class="item-seller">Seller: {{ item.product.sellerName }}</p>
+          </div>
+          
+          <div class="item-quantity">
+            <button class="quantity-btn" (click)="decrementQuantity(item)" [disabled]="item.quantity <= 1">
+              <fa-icon [icon]="faMinus"></fa-icon>
+            </button>
+            <input 
+              type="number" 
+              [value]="item.quantity" 
+              min="1" 
+              (change)="updateQuantity(item, $any($event.target).value)" 
+              class="quantity-input"
+            >
+            <button class="quantity-btn" (click)="incrementQuantity(item)">
+              <fa-icon [icon]="faPlus"></fa-icon>
+            </button>
+          </div>
+          
+          <div class="item-total">
+            {{ formatPrice(item.product.price * item.quantity) }}
+          </div>
+          
+          <button class="remove-item-btn" (click)="removeItem(item.product.id)" title="Remove item">
+            <fa-icon [icon]="faTrash"></fa-icon>
+          </button>
+        </div>
+      }
+    </div>
+    
+    <div class="cart-summary">
+      <div class="summary-row">
+        <span>Subtotal ({{ cart.totalItems }} items):</span>
+        <span>{{ formatPrice(cart.totalPrice) }}</span>
+      </div>
+      <div class="summary-row">
+        <span>Shipping:</span>
+        <span>Free</span>
+      </div>
+      <div class="summary-row total">
+        <span>Total:</span>
+        <span>{{ formatPrice(cart.totalPrice) }}</span>
+      </div>
+      
+      <div class="cart-actions">
+        <a routerLink="/browse" class="continue-shopping-btn">Continue Shopping</a>
+        <a routerLink="/checkout" class="checkout-btn">Proceed to Checkout</a>
+      </div>
+    </div>
+  }
+</div>

@@ -1,59 +1,122 @@
-# Marketplace
+# Marketplace Application
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.1.
+A modern e-commerce marketplace built with Angular 19, Firebase, and AWS S3 for image storage.
 
-## Development server
+## Features
 
-To start a local development server, run:
+- **Authentication**: User registration and login with Firebase Authentication
+- **Product Browsing**: Browse products with filtering and sorting options
+- **Product Details**: View detailed product information
+- **Shopping Cart**: Add products to cart (stored in local storage)
+- **Product Management**: Add new products with image uploads
+- **Real-time Chat**: Chat with product owners in real-time
 
-```bash
-ng serve
+## Tech Stack
+
+- **Frontend**: Angular 19
+- **Authentication & Database**: Firebase (Auth, Firestore)
+- **Image Storage**: AWS S3
+- **Styling**: SCSS
+- **Icons**: Font Awesome
+
+## Project Structure
+
+```
+marketplace/
+├── src/
+│   ├── app/
+│   │   ├── components/       # Reusable UI components
+│   │   ├── guards/           # Route guards
+│   │   ├── models/           # TypeScript interfaces
+│   │   ├── pages/            # Page components
+│   │   ├── services/         # Services for data handling
+│   │   ├── app.component.ts  # Root component
+│   │   ├── app.config.ts     # App configuration
+│   │   └── app.routes.ts     # Routing configuration
+│   ├── assets/               # Static assets
+│   ├── environments/         # Environment configurations
+│   ├── index.html            # Main HTML file
+│   ├── main.ts               # Application entry point
+│   └── styles.scss           # Global styles
+└── package.json              # Dependencies and scripts
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Setup Instructions
 
-## Code scaffolding
+### Prerequisites
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- Node.js (v18 or later)
+- npm (v9 or later)
+- Angular CLI (v19)
+- Firebase account
+- AWS account with S3 bucket
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd marketplace
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Configure Firebase:
+   - Create a Firebase project at [Firebase Console](https://console.firebase.google.com/)
+   - Enable Authentication (Email/Password) and Firestore
+   - Update the Firebase configuration in `src/environments/environment.ts` and `environment.prod.ts`
+
+4. Configure AWS S3:
+   - Create an S3 bucket in your AWS account
+   - Set up appropriate CORS configuration for the bucket
+   - Update the AWS S3 configuration in `src/environments/environment.ts` and `environment.prod.ts`
+
+5. Start the development server:
+   ```bash
+   npm start
+   ```
+
+6. Open your browser and navigate to `http://localhost:4200/`
+
+### Building for Production
 
 ```bash
-ng generate component component-name
+npm run build
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+The build artifacts will be stored in the `dist/` directory.
 
-```bash
-ng generate --help
-```
+## Features in Detail
 
-## Building
+### Authentication
 
-To build the project run:
+- User registration with email and password
+- User login
+- Protected routes for authenticated users
 
-```bash
-ng build
-```
+### Product Management
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+- Add new products with multiple images
+- Edit existing products
+- Delete products
 
-## Running unit tests
+### Shopping Experience
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+- Browse products with category filters
+- Sort products by price, date, etc.
+- Search products by name or description
+- Add products to cart
+- View and manage shopping cart
 
-```bash
-ng test
-```
+### Real-time Chat
 
-## Running end-to-end tests
+- Chat with product sellers
+- Real-time message updates
+- Message history
 
-For end-to-end (e2e) testing, run:
+## License
 
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+This project is licensed under the MIT License - see the LICENSE file for details.

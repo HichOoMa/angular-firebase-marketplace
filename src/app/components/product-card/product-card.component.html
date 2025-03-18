@@ -1,0 +1,34 @@
+<div class="product-card" [class.featured]="featured">
+  @if (featured) {
+    <div class="featured-badge">
+      <fa-icon [icon]="faStar"></fa-icon>
+      <span>Featured</span>
+    </div>
+  }
+  
+  <a [routerLink]="['/product', product.id]" class="product-link">
+    <div class="product-image-container">
+      <img [src]="mainImage" [alt]="product.title" class="product-image">
+      <div class="product-condition">{{ product.condition }}</div>
+    </div>
+    
+    <div class="product-info">
+      <h3 class="product-title">{{ product.title }}</h3>
+      <p class="product-price">{{ formatPrice(product.price) }}</p>
+      
+      <div class="product-meta">
+        <span class="product-category">{{ product.category }}</span>
+        <span class="product-date">{{ formatDate(product.createdAt) }}</span>
+      </div>
+      
+      <p class="product-description">{{ product.description | slice:0:100 }}{{ product.description.length > 100 ? '...' : '' }}</p>
+      
+      <div class="product-footer">
+        <span class="product-seller">By {{ product.sellerName }}</span>
+        <button class="add-to-cart-btn" (click)="addToCart($event)" title="Add to Cart">
+          <fa-icon [icon]="faShoppingCart"></fa-icon>
+        </button>
+      </div>
+    </div>
+  </a>
+</div>

@@ -1,0 +1,241 @@
+<div class="add-product-container">
+  <div class="back-link">
+    <a routerLink="/browse" class="back-btn">
+      <fa-icon [icon]="faArrowLeft"></fa-icon> Back to Browse
+    </a>
+  </div>
+  
+  <h1 class="page-title">Add New Product</h1>
+  
+  @if (loading) {
+    <div class="loading-container">
+      <app-loading-spinner [message]="'Loading categories...'"></app-loading-spinner>
+    </div>
+  } @else {
+    <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="product-form">
+      <div class="form-grid">
+        <div class="form-left">
+          <!-- Basic Information -->
+          <div class="form-section">
+            <h2 class="section-title">Basic Information</h2>
+            
+            <div class="form-group">
+              <label for="title" class="form-label">Title <span class="required">*</span></label>
+              <input 
+                type="text" 
+                id="title" 
+                formControlName="title" 
+                class="form-control" 
+                [class.is-invalid]="productForm.get('title')?.invalid && productForm.get('title')?.touched"
+              >
+              @if (productForm.get('title')?.invalid && productForm.get('title')?.touched) {
+                <div class="error-message">
+                  @if (productForm.get('title')?.errors?.['required']) {
+                    Title is required.
+                  } @else if (productForm.get('title')?.errors?.['minlength']) {
+                    Title must be at least 5 characters.
+                  } @else if (productForm.get('title')?.errors?.['maxlength']) {
+                    Title cannot exceed 100 characters.
+                  }
+                </div>
+              }
+            </div>
+            
+            <div class="form-group">
+              <label for="description" class="form-label">Description <span class="required">*</span></label>
+              <textarea 
+                id="description" 
+                formControlName="description" 
+                class="form-control" 
+                rows="5"
+                [class.is-invalid]="productForm.get('description')?.invalid && productForm.get('description')?.touched"
+              ></textarea>
+              @if (productForm.get('description')?.invalid && productForm.get('description')?.touched) {
+                <div class="error-message">
+                  @if (productForm.get('description')?.errors?.['required']) {
+                    Description is required.
+                  } @else if (productForm.get('description')?.errors?.['minlength']) {
+                    Description must be at least 20 characters.
+                  }
+                </div>
+              }
+            </div>
+            
+            <div class="form-group">
+              <label for="price" class="form-label">Price <span class="required">*</span></label>
+              <div class="price-input-wrapper">
+                <span class="currency-symbol">$</span>
+                <input 
+                  type="number" 
+                  id="price" 
+                  formControlName="price" 
+                  class="form-control" 
+                  step="0.01" 
+                  min="0.01"
+                  [class.is-invalid]="productForm.get('price')?.invalid && productForm.get('price')?.touched"
+                >
+              </div>
+              @if (productForm.get('price')?.invalid && productForm.get('price')?.touched) {
+                <div class="error-message">
+                  @if (productForm.get('price')?.errors?.['required']) {
+                    Price is required.
+                  } @else if (productForm.get('price')?.errors?.['min']) {
+                    Price must be greater than 0.
+                  }
+                </div>
+              }
+            </div>
+          </div>
+          
+          <!-- Category and Condition -->
+          <div class="form-section">
+            <h2 class="section-title">Category and Condition</h2>
+            
+            <div class="form-group">
+              <label for="category" class="form-label">Category <span class="required">*</span></label>
+              <select 
+                id="category" 
+                formControlName="category" 
+                class="form-control"
+                [class.is-invalid]="productForm.get('category')?.invalid && productForm.get('category')?.touched"
+              >
+                <option value="" disabled>Select a category</option>
+                @for (category of categories; track category) {
+                  <option [value]="category">{{ category }}</option>
+                }
+              </select>
+              @if (productForm.get('category')?.invalid && productForm.get('category')?.touched) {
+                <div class="error-message">
+                  Category is required.
+                </div>
+              }
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Condition <span class="required">*</span></label>
+              <div class="radio-group">
+                @for (condition of conditions; track condition) {
+                  <div class="radio-option">
+                    <input 
+                      type="radio" 
+                      [id]="'condition-' + condition" 
+                      formControlName="condition" 
+                      [value]="condition"
+                    >
+                    <label [for]="'condition-' + condition">{{ condition | titlecase }}</label>
+                  </div>
+                }
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="location" class="form-label">Location</label>
+              <input 
+                type="text" 
+                id="location" 
+                formControlName="location" 
+                class="form-control" 
+                placeholder="City, State"
+              >
+            </div>
+          </div>
+          
+          <!-- Tags -->
+          <div class="form-section">
+            <h2 class="section-title">Tags</h2>
+            <p class="section-description">Add tags to help buyers find your product (optional)</p>
+            
+            <div formArrayName="tags" class="tags-container">
+              @for (tag of tagsArray.controls; track $index) {
+                <div [formGroupName]="$index" class="tag-input-group">
+                  <input 
+                    type="text" 
+                    formControlName="value" 
+                    class="form-control tag-input" 
+                    placeholder="Enter tag"
+                  >
+                  @if ($index === tagsArray.length - 1) {
+                    <button 
+                      type="button" 
+                      class="add-tag-btn" 
+                      (click)="addTagField()" 
+                      [disabled]="tag.get('value')?.value === ''"
+                    >
+                      <fa-icon [icon]="faPlus"></fa-icon>
+                    </button>
+                  } @else {
+                    <button 
+                      type="button" 
+                      class="remove-tag-btn" 
+                      (click)="removeTagField($index)"
+                    >
+                      <fa-icon [icon]="faTimes"></fa-icon>
+                    </button>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-right">
+          <!-- Images Upload -->
+          <div class="form-section">
+            <h2 class="section-title">Product Images <span class="required">*</span></h2>
+            <p class="section-description">Upload up to 5 images of your product</p>
+            
+            <div class="image-upload-container">
+              <div class="image-upload-area">
+                <input 
+                  type="file" 
+                  id="product-images" 
+                  accept="image/*" 
+                  multiple 
+                  (change)="onFileSelected($event)" 
+                  class="file-input"
+                  [disabled]="selectedFiles.length >= 5"
+                >
+                <label for="product-images" class="file-input-label" [class.disabled]="selectedFiles.length >= 5">
+                  <fa-icon [icon]="faUpload"></fa-icon>
+                  <span>Click to upload images</span>
+                  <span class="file-count">{{ selectedFiles.length }}/5</span>
+                </label>
+              </div>
+              
+              @if (imagePreviewUrls.length > 0) {
+                <div class="image-previews">
+                  @for (preview of imagePreviewUrls; track $index) {
+                    <div class="image-preview-item">
+                      <img [src]="preview" alt="Preview">
+                      <button 
+                        type="button" 
+                        class="remove-image-btn" 
+                        (click)="removeImage($index)"
+                      >
+                        <fa-icon [icon]="faTimes"></fa-icon>
+                      </button>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-actions">
+        <button 
+          type="submit" 
+          class="submit-btn" 
+          [disabled]="submitting"
+        >
+          @if (submitting) {
+            <app-loading-spinner [size]="20"></app-loading-spinner> Submitting...
+          } @else {
+            List Product
+          }
+        </button>
+      </div>
+    </form>
+  }
+</div>

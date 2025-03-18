@@ -1,0 +1,89 @@
+<div class="home-container">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">Find Everything You Need</h1>
+      <p class="hero-subtitle">Discover amazing products from sellers around the world</p>
+      <div class="hero-actions">
+        <a routerLink="/browse" class="browse-btn">Browse Products</a>
+        <a routerLink="/add-product" class="sell-btn">Sell an Item</a>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Categories Section -->
+  <section class="categories-section">
+    <div class="section-header">
+      <h2 class="section-title">Browse Categories</h2>
+    </div>
+    
+    @if (loadingCategories) {
+      <div class="loading-container">
+        <app-loading-spinner [message]="'Loading categories...'"></app-loading-spinner>
+      </div>
+    } @else if (categories.length === 0) {
+      <p class="no-items-message">No categories available.</p>
+    } @else {
+      <div class="categories-grid">
+        @for (category of categories; track category) {
+          <a [routerLink]="['/browse']" [queryParams]="{category: category}" class="category-card">
+            <div class="category-name">{{ category }}</div>
+          </a>
+        }
+      </div>
+    }
+  </section>
+  
+  <!-- Featured Products Section -->
+  <section class="featured-section">
+    <div class="section-header">
+      <h2 class="section-title">Featured Products</h2>
+      <a routerLink="/browse" [queryParams]="{featured: true}" class="view-all-link">View All</a>
+    </div>
+    
+    @if (loadingFeatured) {
+      <div class="loading-container">
+        <app-loading-spinner [message]="'Loading featured products...'"></app-loading-spinner>
+      </div>
+    } @else if (featuredProducts.length === 0) {
+      <p class="no-items-message">No featured products available.</p>
+    } @else {
+      <div class="products-grid">
+        @for (product of featuredProducts; track product.id) {
+          <app-product-card [product]="product" [featured]="true"></app-product-card>
+        }
+      </div>
+    }
+  </section>
+  
+  <!-- Recent Products Section -->
+  <section class="recent-section">
+    <div class="section-header">
+      <h2 class="section-title">Recently Added</h2>
+      <a routerLink="/browse" class="view-all-link">View All</a>
+    </div>
+    
+    @if (loadingRecent) {
+      <div class="loading-container">
+        <app-loading-spinner [message]="'Loading recent products...'"></app-loading-spinner>
+      </div>
+    } @else if (recentProducts.length === 0) {
+      <p class="no-items-message">No recent products available.</p>
+    } @else {
+      <div class="products-grid">
+        @for (product of recentProducts; track product.id) {
+          <app-product-card [product]="product"></app-product-card>
+        }
+      </div>
+    }
+  </section>
+  
+  <!-- Call to Action Section -->
+  <section class="cta-section">
+    <div class="cta-content">
+      <h2 class="cta-title">Ready to Sell Your Items?</h2>
+      <p class="cta-text">Join thousands of sellers and start listing your products today.</p>
+      <a routerLink="/add-product" class="cta-button">Start Selling</a>
+    </div>
+  </section>
+</div>

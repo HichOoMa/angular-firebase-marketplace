@@ -1,0 +1,49 @@
+<div class="chat-container">
+  <div class="chat-header">
+    <h3 class="chat-title">Chat with Seller</h3>
+  </div>
+  
+  @if (loading) {
+    <div class="chat-loading">
+      <app-loading-spinner [size]="40" [message]="'Loading chat...'"></app-loading-spinner>
+    </div>
+  } @else if (!currentUser) {
+    <div class="chat-login-prompt">
+      <p>Please log in to chat with the seller.</p>
+      <a routerLink="/auth/login" [queryParams]="{returnUrl: '/product/' + productId}" class="login-btn">Login</a>
+    </div>
+  } @else {
+    <div class="messages-container" #messagesContainer>
+      @if (messages.length === 0) {
+        <div class="no-messages">
+          <p>No messages yet. Start the conversation!</p>
+        </div>
+      } @else {
+        @for (message of messages; track message.id) {
+          <div class="message" [class.own-message]="isOwnMessage(message)" [class.other-message]="!isOwnMessage(message)">
+            <div class="message-content">
+              <p class="message-text">{{ message.content }}</p>
+              <span class="message-time">{{ formatTimestamp(message.timestamp) }}</span>
+            </div>
+          </div>
+        }
+      }
+    </div>
+    
+    <div class="message-input-container">
+      <form (ngSubmit)="sendMessage()" class="message-form">
+        <input 
+          type="text" 
+          [(ngModel)]="newMessage" 
+          name="message" 
+          placeholder="Type your message..." 
+          class="message-input"
+          autocomplete="off"
+        >
+        <button type="submit" class="send-button" [disabled]="!newMessage.trim()">
+          <fa-icon [icon]="faPaperPlane"></fa-icon>
+        </button>
+      </form>
+    </div>
+  }
+</div>

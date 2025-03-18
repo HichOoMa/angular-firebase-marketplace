@@ -1,0 +1,56 @@
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-section about">
+        <h3 class="footer-title">Marketplace</h3>
+        <p class="footer-description">
+          Your one-stop shop for buying and selling products online. Connect with sellers, find great deals, and sell your items easily.
+        </p>
+        <div class="social-links">
+          <a href="#" class="social-link">
+            <fa-icon [icon]="faFacebook"></fa-icon>
+          </a>
+          <a href="#" class="social-link">
+            <fa-icon [icon]="faTwitter"></fa-icon>
+          </a>
+          <a href="#" class="social-link">
+            <fa-icon [icon]="faInstagram"></fa-icon>
+          </a>
+          <a href="#" class="social-link">
+            <fa-icon [icon]="faLinkedin"></fa-icon>
+          </a>
+        </div>
+      </div>
+      
+      <div class="footer-section links">
+        <h3 class="footer-title">Quick Links</h3>
+        <ul class="footer-links">
+          <li><a routerLink="/" class="footer-link">Home</a></li>
+          <li><a routerLink="/browse" class="footer-link">Browse Products</a></li>
+          <li><a routerLink="/add-product" class="footer-link">Sell an Item</a></li>
+          <li><a routerLink="/auth/login" class="footer-link">Login</a></li>
+          <li><a routerLink="/auth/register" class="footer-link">Register</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section contact">
+        <h3 class="footer-title">Contact Us</h3>
+        <ul class="contact-info">
+          <li>Email: info{{ '@' }}marketplace.com</li>
+          <li>Phone: +1 (123) 456-7890</li>
+          <li>Address: 123 Market Street, City, Country</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p class="copyright">
+        &copy; {{ currentYear }} Marketplace. All rights reserved.
+      </p>
+      <div class="footer-bottom-links">
+        <a routerLink="/privacy" class="footer-bottom-link">Privacy Policy</a>
+        <a routerLink="/terms" class="footer-bottom-link">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+</footer>

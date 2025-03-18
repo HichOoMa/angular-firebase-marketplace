@@ -1,0 +1,83 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h1 class="auth-title">Login</h1>
+      <p class="auth-subtitle">Sign in to your account</p>
+    </div>
+    
+    @if (errorMessage) {
+      <div class="error-alert">
+        {{ errorMessage }}
+      </div>
+    }
+    
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
+      <div class="form-group">
+        <label for="email" class="form-label">Email</label>
+        <div class="input-with-icon">
+          <fa-icon [icon]="faEnvelope" class="input-icon"></fa-icon>
+          <input 
+            type="email" 
+            id="email" 
+            formControlName="email" 
+            class="form-control" 
+            placeholder="Enter your email"
+            [class.is-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+          >
+        </div>
+        @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+          <div class="error-message">
+            @if (loginForm.get('email')?.errors?.['required']) {
+              Email is required.
+            } @else if (loginForm.get('email')?.errors?.['email']) {
+              Please enter a valid email address.
+            }
+          </div>
+        }
+      </div>
+      
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <div class="input-with-icon">
+          <fa-icon [icon]="faLock" class="input-icon"></fa-icon>
+          <input 
+            type="password" 
+            id="password" 
+            formControlName="password" 
+            class="form-control" 
+            placeholder="Enter your password"
+            [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+          >
+        </div>
+        @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+          <div class="error-message">
+            @if (loginForm.get('password')?.errors?.['required']) {
+              Password is required.
+            } @else if (loginForm.get('password')?.errors?.['minlength']) {
+              Password must be at least 6 characters.
+            }
+          </div>
+        }
+      </div>
+      
+      <div class="form-actions">
+        <button 
+          type="submit" 
+          class="submit-btn" 
+          [disabled]="loginForm.invalid || loading"
+        >
+          @if (loading) {
+            <app-loading-spinner [size]="20"></app-loading-spinner> Logging in...
+          } @else {
+            <fa-icon [icon]="faSignInAlt"></fa-icon> Login
+          }
+        </button>
+      </div>
+    </form>
+    
+    <div class="auth-footer">
+      <p>Don't have an account? <a routerLink="/auth/register" [queryParams]="{returnUrl: returnUrl}">Register</a></p>
+      <p><a routerLink="/">Back to Home</a></p>
+    </div>
+  </div>
+</div>

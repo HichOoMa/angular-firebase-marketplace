@@ -1,0 +1,69 @@
+<header class="header">
+  <div class="container">
+    <div class="header-content">
+      <div class="logo">
+        <a routerLink="/" class="logo-link">Marketplace</a>
+      </div>
+      
+      <div class="search-bar">
+        <form (ngSubmit)="onSearch()" class="search-form">
+          <input 
+            type="text" 
+            [(ngModel)]="searchTerm" 
+            name="search" 
+            placeholder="Search products..." 
+            class="search-input"
+          >
+          <button type="submit" class="search-button">
+            <fa-icon [icon]="faSearch"></fa-icon>
+          </button>
+        </form>
+      </div>
+      
+      <nav class="navigation">
+        <ul class="nav-list">
+          <li class="nav-item">
+            <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">Home</a>
+          </li>
+          <li class="nav-item">
+            <a routerLink="/browse" routerLinkActive="active" class="nav-link">Browse</a>
+          </li>
+          
+          <!-- Show these links only when user is logged in -->
+          @if (currentUser$ | async; as user) {
+            <li class="nav-item">
+              <a routerLink="/add-product" routerLinkActive="active" class="nav-link">
+                <fa-icon [icon]="faPlus"></fa-icon> Add Product
+              </a>
+            </li>
+            <li class="nav-item">
+              <a routerLink="/profile" routerLinkActive="active" class="nav-link">
+                <fa-icon [icon]="faUser"></fa-icon> Profile
+              </a>
+            </li>
+            <li class="nav-item">
+              <button (click)="logout()" class="nav-link logout-btn">
+                <fa-icon [icon]="faSignOutAlt"></fa-icon> Logout
+              </button>
+            </li>
+          } @else {
+            <li class="nav-item">
+              <a routerLink="/auth/login" routerLinkActive="active" class="nav-link">
+                <fa-icon [icon]="faSignInAlt"></fa-icon> Login
+              </a>
+            </li>
+          }
+          
+          <li class="nav-item cart-item">
+            <a routerLink="/cart" routerLinkActive="active" class="nav-link cart-link">
+              <fa-icon [icon]="faShoppingCart"></fa-icon>
+              @if ((cartItemCount$ | async) && (cartItemCount$ | async)! > 0) {
+                <span class="cart-count">{{ cartItemCount$ | async }}</span>
+              }
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>

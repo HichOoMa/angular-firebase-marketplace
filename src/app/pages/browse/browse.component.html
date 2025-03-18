@@ -1,0 +1,238 @@
+<div class="browse-container">
+  <div class="browse-header">
+    <h1 class="browse-title">Browse Products</h1>
+    
+    <div class="browse-actions">
+      <div class="search-box">
+        <input 
+          type="text" 
+          [(ngModel)]="filter.searchTerm" 
+          placeholder="Search products..." 
+          class="search-input"
+        >
+        <button class="search-btn" (click)="applyFilters()">
+          <fa-icon [icon]="faSearch"></fa-icon>
+        </button>
+      </div>
+      
+      <div class="sort-box">
+        <label for="sort" class="sort-label">
+          <fa-icon [icon]="faSort"></fa-icon> Sort:
+        </label>
+        <select 
+          id="sort" 
+          [(ngModel)]="selectedSort" 
+          (change)="onSortChange()" 
+          class="sort-select"
+        >
+          @for (option of sortOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+      
+      <button class="filter-toggle-btn" (click)="toggleFilters()">
+        <fa-icon [icon]="faFilter"></fa-icon> Filters
+      </button>
+    </div>
+  </div>
+  
+  <div class="browse-content">
+    <!-- Filters Sidebar -->
+    <div class="filters-sidebar" [class.active]="showFilters">
+      <div class="filters-header">
+        <h3 class="filters-title">Filters</h3>
+        <button class="close-filters-btn" (click)="toggleFilters()">
+          <fa-icon [icon]="faTimes"></fa-icon>
+        </button>
+      </div>
+      
+      <div class="filter-group">
+        <h4 class="filter-group-title">Categories</h4>
+        <div class="filter-options">
+          <div class="filter-option">
+            <input 
+              type="radio" 
+              id="category-all" 
+              name="category" 
+              [checked]="!filter.category" 
+              (change)="filter.category = undefined"
+            >
+            <label for="category-all">All Categories</label>
+          </div>
+          
+          @for (category of categories; track category) {
+            <div class="filter-option">
+              <input 
+                type="radio" 
+                [id]="'category-' + category" 
+                name="category" 
+                [checked]="filter.category === category" 
+                (change)="filter.category = category"
+              >
+              <label [for]="'category-' + category">{{ category }}</label>
+            </div>
+          }
+        </div>
+      </div>
+      
+      <div class="filter-group">
+        <h4 class="filter-group-title">Condition</h4>
+        <div class="filter-options">
+          <div class="filter-option">
+            <input 
+              type="radio" 
+              id="condition-all" 
+              name="condition" 
+              [checked]="!filter.condition" 
+              (change)="filter.condition = undefined"
+            >
+            <label for="condition-all">All Conditions</label>
+          </div>
+          
+          @for (condition of conditions; track condition) {
+            <div class="filter-option">
+              <input 
+                type="radio" 
+                [id]="'condition-' + condition" 
+                name="condition" 
+                [checked]="filter.condition === condition" 
+                (change)="filter.condition = condition"
+              >
+              <label [for]="'condition-' + condition">{{ condition | titlecase }}</label>
+            </div>
+          }
+        </div>
+      </div>
+      
+      <div class="filter-group">
+        <h4 class="filter-group-title">Price Range</h4>
+        <div class="price-range">
+          <input 
+            type="number" 
+            [(ngModel)]="filter.minPrice" 
+            placeholder="Min" 
+            class="price-input"
+          >
+          <span class="price-separator">to</span>
+          <input 
+            type="number" 
+            [(ngModel)]="filter.maxPrice" 
+            placeholder="Max" 
+            class="price-input"
+          >
+        </div>
+      </div>
+      
+      <div class="filter-actions">
+        <button class="apply-filters-btn" (click)="applyFilters()">Apply Filters</button>
+        <button class="reset-filters-btn" (click)="resetFilters()">Reset</button>
+      </div>
+    </div>
+    
+    <!-- Products Grid -->
+    <div class="products-section">
+      @if (loading) {
+        <div class="loading-container">
+          <app-loading-spinner [message]="'Loading products...'"></app-loading-spinner>
+        </div>
+      } @else if (products.length === 0) {
+        <div class="no-products">
+          <p>No products found matching your criteria.</p>
+          <button class="reset-filters-btn" (click)="resetFilters()">Reset Filters</button>
+        </div>
+      } @else {
+        <!-- Active Filters -->
+        @if (filter.category || filter.condition || filter.minPrice || filter.maxPrice || filter.searchTerm) {
+          <div class="active-filters">
+            <span class="active-filters-label">Active Filters:</span>
+            
+            @if (filter.category) {
+              <span class="filter-tag">
+                Category: {{ filter.category }}
+                <button class="remove-filter-btn" (click)="filter.category = undefined; applyFilters()">
+                  <fa-icon [icon]="faTimes"></fa-icon>
+                </button>
+              </span>
+            }
+            
+            @if (filter.condition) {
+              <span class="filter-tag">
+                Condition: {{ filter.condition | titlecase }}
+                <button class="remove-filter-btn" (click)="filter.condition = undefined; applyFilters()">
+                  <fa-icon [icon]="faTimes"></fa-icon>
+                </button>
+              </span>
+            }
+            
+            @if (filter.minPrice) {
+              <span class="filter-tag">
+                Min Price: ${{ filter.minPrice }}
+                <button class="remove-filter-btn" (click)="filter.minPrice = undefined; applyFilters()">
+                  <fa-icon [icon]="faTimes"></fa-icon>
+                </button>
+              </span>
+            }
+            
+            @if (filter.maxPrice) {
+              <span class="filter-tag">
+                Max Price: ${{ filter.maxPrice }}
+                <button class="remove-filter-btn" (click)="filter.maxPrice = undefined; applyFilters()">
+                  <fa-icon [icon]="faTimes"></fa-icon>
+                </button>
+              </span>
+            }
+            
+            @if (filter.searchTerm) {
+              <span class="filter-tag">
+                Search: "{{ filter.searchTerm }}"
+                <button class="remove-filter-btn" (click)="filter.searchTerm = undefined; applyFilters()">
+                  <fa-icon [icon]="faTimes"></fa-icon>
+                </button>
+              </span>
+            }
+            
+            <button class="clear-all-filters-btn" (click)="resetFilters()">Clear All</button>
+          </div>
+        }
+        
+        <div class="products-grid">
+          @for (product of paginatedProducts; track product.id) {
+            <app-product-card [product]="product"></app-product-card>
+          }
+        </div>
+        
+        <!-- Pagination -->
+        @if (totalPages > 1) {
+          <div class="pagination">
+            <button 
+              class="pagination-btn" 
+              [disabled]="currentPage === 1" 
+              (click)="changePage(currentPage - 1)"
+            >
+              Previous
+            </button>
+            
+            @for (page of pages; track page) {
+              <button 
+                class="pagination-btn" 
+                [class.active]="currentPage === page" 
+                (click)="changePage(page)"
+              >
+                {{ page }}
+              </button>
+            }
+            
+            <button 
+              class="pagination-btn" 
+              [disabled]="currentPage === totalPages" 
+              (click)="changePage(currentPage + 1)"
+            >
+              Next
+            </button>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</div>

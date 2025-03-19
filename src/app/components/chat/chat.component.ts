@@ -60,21 +60,20 @@ export class ChatComponent implements OnInit, OnDestroy {
     try {
       // Create or get existing chat room
       this.chatRoomId = await this.chatService.createChatRoom(this.productId, this.sellerId);
-      
       // Subscribe to messages
       this.messagesSubscription = this.chatService.getChatRoomMessages(this.chatRoomId)
-        .subscribe(messages => {
-          this.messages = messages;
-          this.loading = false;
-          
-          // Mark messages as read
-          if (this.currentUser) {
-            this.chatService.markMessagesAsRead(this.chatRoomId, this.currentUser.id).subscribe();
-          }
-          
-          // Scroll to bottom of messages
-          setTimeout(() => this.scrollToBottom(), 100);
-        });
+      .subscribe(messages => {
+        this.messages = messages;
+        this.loading = false;
+        
+        // Mark messages as read
+        if (this.currentUser) {
+          this.chatService.markMessagesAsRead(this.chatRoomId, this.currentUser.id).subscribe();
+        }
+        
+        // Scroll to bottom of messages
+        setTimeout(() => this.scrollToBottom(), 100);
+      });
     } catch (error) {
       console.error('Error initializing chat:', error);
       this.loading = false;
@@ -98,8 +97,8 @@ export class ChatComponent implements OnInit, OnDestroy {
     return this.currentUser?.id === message.senderId;
   }
   
-  formatTimestamp(timestamp: Date): string {
-    return new Date(timestamp).toLocaleTimeString('en-US', {
+  formatTimestamp(timestamp: any): string {
+    return new Date(timestamp.seconds).toLocaleTimeString('en-US', {
       hour: '2-digit',
       minute: '2-digit'
     });

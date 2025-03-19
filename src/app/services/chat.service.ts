@@ -15,7 +15,7 @@ import {
   Timestamp,
   getDoc
 } from '@angular/fire/firestore';
-import { Observable, from, map, of, switchMap, BehaviorSubject } from 'rxjs';
+import { Observable, from, map, of, switchMap, BehaviorSubject, firstValueFrom } from 'rxjs';
 import { Message, ChatRoom } from '../models/message.model';
 import { AuthService } from './auth.service';
 import { User } from '../models/user.model';
@@ -56,12 +56,12 @@ export class ChatService {
   }
 
   async sendMessage(roomId: string, content: string): Promise<void> {
-    const currentUser = await this.authService.currentUser$.pipe(
+    const currentUser = await firstValueFrom(this.authService.currentUser$.pipe(
       map(user => {
         if (!user) throw new Error('User must be logged in to send messages');
         return user;
       })
-    ).toPromise();
+    ));
     
     const roomDoc = doc(this.firestore, `chatRooms/${roomId}`);
     const roomSnapshot = await getDoc(roomDoc);
@@ -88,7 +88,7 @@ export class ChatService {
     };
     
     // Add message to messages collection
-    await addDoc(this.messagesCollection, newMessage);
+    await addDoc(this.messagesCollection, {...newMessage, roomId});
     
     // Update last message in chat room
     await updateDoc(roomDoc, {
@@ -97,12 +97,12 @@ export class ChatService {
   }
 
   async createChatRoom(productId: string, sellerId: string): Promise<string> {
-    const currentUser = await this.authService.currentUser$.pipe(
+    const currentUser = await firstValueFrom(this.authService.currentUser$.pipe(
       map(user => {
         if (!user) throw new Error('User must be logged in to create a chat room');
         return user;
       })
-    ).toPromise();
+    ));
     
     // Check if chat room already exists for this product and these users
     const existingRoomQuery = query(

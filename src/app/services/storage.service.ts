@@ -34,7 +34,6 @@ export class StorageService {
 
     try {
       const response = await this.s3.upload(params).promise();
-      console.log('File uploaded:', response);
       return response.Location; // Return the public URL of the uploaded image
     } catch (error) {
       console.error('Error uploading file:', error);

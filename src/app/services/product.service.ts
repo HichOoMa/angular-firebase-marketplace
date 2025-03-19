@@ -94,7 +94,6 @@ export class ProductService {
     const imageUrls = await Promise.all(
       imageFiles.map(file => this.storageService.uploadProductImage(file))
     );
-    console.log('Image URLs:', imageUrls);
     
     // Get current user
     const currentUser = await firstValueFrom(this.authService.currentUser$.pipe(
@@ -114,7 +113,6 @@ export class ProductService {
     };
     
     const docRef = await addDoc(this.productsCollection, newProduct);
-    console.log('Product added with ID:', docRef.id);
     return docRef.id;
   }
 

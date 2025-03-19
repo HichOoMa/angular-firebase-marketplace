@@ -15,7 +15,7 @@ import {
   DocumentReference,
   getDocs
 } from '@angular/fire/firestore';
-import { Observable, from, map, of, switchMap } from 'rxjs';
+import { Observable, from, map, of, switchMap, firstValueFrom } from 'rxjs';
 import { Product, ProductFilter } from '../models/product.model';
 import { StorageService } from './storage.service';
 import { AuthService } from './auth.service';
@@ -97,12 +97,12 @@ export class ProductService {
     console.log('Image URLs:', imageUrls);
     
     // Get current user
-    const currentUser = await this.authService.currentUser$.pipe(
+    const currentUser = await firstValueFrom(this.authService.currentUser$.pipe(
       map(user => {
         if (!user) throw new Error('User must be logged in to add a product');
         return user;
       })
-    ).toPromise();
+    ));
     
     const newProduct: Omit<Product, 'id'> = {
       ...product,

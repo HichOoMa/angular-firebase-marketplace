@@ -1,0 +1,234 @@
+<div class="profile-container">
+  <div *ngIf="isLoading" class="loading-container">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+
+  <ng-container *ngIf="(currentUser$ | async) as user; else notLoggedIn">
+    <div class="profile-header">
+      <div class="user-info">
+        <div class="avatar">
+          <img [src]="user.photoURL || 'assets/default-avatar.png'" alt="Profile picture" class="profile-image">
+        </div>
+        <div class="user-details">
+          <h1>{{ user.displayName }}</h1>
+          <p>{{ user.email }}</p>
+          <p>Member since {{ user.createdAt | date:'mediumDate' }}</p>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" (click)="toggleEditProfile()">
+          {{ isEditingProfile ? 'Cancel' : 'Edit Profile' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Profile Edit Form -->
+    <div *ngIf="isEditingProfile" class="profile-edit-form">
+      <h2>Edit Profile</h2>
+      <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+        <div class="form-group">
+          <label for="displayName">Display Name</label>
+          <input type="text" id="displayName" formControlName="displayName" class="form-control">
+          <div *ngIf="profileForm.get('displayName')?.invalid && profileForm.get('displayName')?.touched" class="error-message">
+            Display name is required
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" formControlName="email" class="form-control">
+        </div>
+        
+        <div class="form-group">
+          <label for="photoURL">Profile Picture URL</label>
+          <input type="text" id="photoURL" formControlName="photoURL" class="form-control">
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn btn-success" [disabled]="profileForm.invalid">Save Changes</button>
+          <button type="button" class="btn btn-secondary" (click)="toggleEditProfile()">Cancel</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- User Products Section -->
+    <div class="user-products">
+      <h2>My Products</h2>
+      
+      <div *ngIf="(userProducts$ | async)?.length === 0" class="no-products">
+        <p>You haven't listed any products yet.</p>
+        <a routerLink="/add-product" class="btn btn-primary">Add Your First Product</a>
+      </div>
+      
+      <ng-container *ngIf="(userProducts$ | async) as products">
+        <!-- Product Editing Form -->
+        <div *ngIf="editingProduct" class="product-edit-form">
+          <h3>Edit Product</h3>
+          <form [formGroup]="productForm" (ngSubmit)="saveProduct()">
+            <div class="form-group">
+              <label for="title">Title</label>
+              <input type="text" id="title" formControlName="title" class="form-control">
+              <div *ngIf="productForm.get('title')?.invalid && productForm.get('title')?.touched" class="error-message">
+                Title is required
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="description">Description</label>
+              <textarea id="description" formControlName="description" class="form-control" rows="4"></textarea>
+              <div *ngIf="productForm.get('description')?.invalid && productForm.get('description')?.touched" class="error-message">
+                Description is required
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="price">Price</label>
+                <input type="number" id="price" formControlName="price" class="form-control" min="0" step="0.01">
+                <div *ngIf="productForm.get('price')?.invalid && productForm.get('price')?.touched" class="error-message">
+                  Valid price is required
+                </div>
+              </div>
+              
+              <div class="form-group col-md-6">
+                <label for="category">Category</label>
+                <select id="category" formControlName="category" class="form-control">
+                  <option value="">Select a category</option>
+                  <option value="Electronics">Electronics</option>
+                  <option value="Clothing">Clothing</option>
+                  <option value="Home & Garden">Home & Garden</option>
+                  <option value="Sporting Goods">Sporting Goods</option>
+                  <option value="Automotive">Automotive</option>
+                  <option value="Toys & Hobbies">Toys & Hobbies</option>
+                  <option value="Health & Beauty">Health & Beauty</option>
+                  <option value="Other">Other</option>
+                </select>
+                <div *ngIf="productForm.get('category')?.invalid && productForm.get('category')?.touched" class="error-message">
+                  Category is required
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="condition">Condition</label>
+                <select id="condition" formControlName="condition" class="form-control">
+                  <option value="new">New</option>
+                  <option value="used">Used</option>
+                  <option value="refurbished">Refurbished</option>
+                </select>
+              </div>
+              
+              <div class="form-group col-md-6">
+                <label for="location">Location</label>
+                <input type="text" id="location" formControlName="location" class="form-control">
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="tags">Tags (comma separated)</label>
+              <input type="text" id="tags" formControlName="tags" class="form-control">
+            </div>
+            
+            <!-- Product Images Section -->
+            <div class="form-group">
+              <label>Product Images</label>
+              
+              <!-- Existing Images -->
+              <div class="current-images" *ngIf="productForm.get('imageUrls')?.value?.length">
+                <h4>Current Images</h4>
+                <div class="image-list">
+                  <div class="image-item" *ngFor="let imageUrl of productForm.get('imageUrls')?.value; let i = index">
+                    <img [src]="imageUrl" alt="Product image" class="product-image-thumbnail">
+                    <button type="button" class="btn btn-sm btn-danger" (click)="removeExistingImage(i)">
+                      <fa-icon [icon]="faTimes"></fa-icon> Remove
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- No Images Message -->
+              <div class="no-images" *ngIf="!productForm.get('imageUrls')?.value?.length && !imagePreviewUrls.length">
+                <p>No images added yet. Upload images below.</p>
+              </div>
+              
+              <!-- Image Upload Area -->
+              <div class="image-upload-container">
+                <div class="image-upload-area">
+                  <input 
+                    type="file" 
+                    id="product-images" 
+                    accept="image/*" 
+                    multiple 
+                    (change)="onFileSelected($event)" 
+                    class="file-input"
+                    [disabled]="(productForm.get('imageUrls')?.value?.length || 0) + selectedFiles.length >= 5"
+                  >
+                  <label for="product-images" class="file-input-label" 
+                    [class.disabled]="(productForm.get('imageUrls')?.value?.length || 0) + selectedFiles.length >= 5">
+                    <fa-icon [icon]="faUpload"></fa-icon>
+                    <span>Click to upload images</span>
+                    <span class="file-count">
+                      {{ (productForm.get('imageUrls')?.value?.length || 0) + selectedFiles.length }}/5
+                    </span>
+                  </label>
+                </div>
+                
+                <!-- New Image Previews -->
+                <div class="image-previews" *ngIf="imagePreviewUrls.length > 0">
+                  <h4>New Images to Upload</h4>
+                  <div class="image-preview-list">
+                    <div class="image-preview-item" *ngFor="let preview of imagePreviewUrls; let i = index">
+                      <img [src]="preview" alt="Preview">
+                      <button 
+                        type="button" 
+                        class="btn btn-sm btn-danger" 
+                        (click)="removeImage(i)"
+                      >
+                        <fa-icon [icon]="faTimes"></fa-icon> Remove
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-actions">
+              <button 
+                type="submit" 
+                class="btn btn-success" 
+                [disabled]="productForm.invalid || submitting"
+              >
+                <span *ngIf="submitting">
+                  <app-loading-spinner [size]="20"></app-loading-spinner> Saving...
+                </span>
+                <span *ngIf="!submitting">Save Changes</span>
+              </button>
+              <button type="button" class="btn btn-secondary" (click)="cancelEditProduct()">Cancel</button>
+            </div>
+          </form>
+        </div>
+        
+        <!-- Products List -->
+        <div *ngIf="!editingProduct" class="products-grid">
+          <div *ngFor="let product of products" class="product-card-container">
+            <div>
+              <app-product-card [product]="product" style="position: relative;"></app-product-card>
+              <div class="product-actions">
+                <button class="btn btn-primary" (click)="editProduct(product)">Edit</button>
+                <button class="btn btn-danger" (click)="deleteProduct(product.id)">Delete</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </ng-container>
+  
+  <ng-template #notLoggedIn>
+    <div *ngIf="!isLoading" class="not-logged-in">
+      <h2>Please log in to view your profile</h2>
+      <a routerLink="/auth/login" class="btn btn-primary">Log In</a>
+    </div>
+  </ng-template>
+</div>

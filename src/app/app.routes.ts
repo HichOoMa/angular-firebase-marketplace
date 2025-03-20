@@ -24,6 +24,11 @@ export const routes: Routes = [
     loadComponent: () => import('./components/cart/cart.component').then(m => m.CartComponent)
   },
   {
+    path: 'profile',
+    loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: 'auth',
     children: [
       {
@@ -36,7 +41,7 @@ export const routes: Routes = [
       }
     ]
   },
-  // Profile and Admin routes would be implemented in a real application
+  // Admin routes would be implemented in a real application
   {
     path: '**',
     redirectTo: ''

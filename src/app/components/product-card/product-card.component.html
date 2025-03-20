@@ -1,7 +1,7 @@
 <div class="product-card" [class.featured]="featured">
   @if (featured) {
     <div class="featured-badge">
-      <fa-icon [icon]="faStar"></fa-icon>
+      <fa-icon [icon]="solidStar"></fa-icon>
       <span>Featured</span>
     </div>
   }
@@ -15,6 +15,15 @@
     <div class="product-info">
       <h3 class="product-title">{{ product.title }}</h3>
       <p class="product-price">{{ formatPrice(product.price) }}</p>
+      
+      <div class="product-rating" *ngIf="averageRating > 0">
+        <div class="stars">
+          @for (star of generateRatingArray(averageRating); track $index) {
+            <fa-icon [icon]="star ? solidStar : regularStar" class="star" [class.filled]="star"></fa-icon>
+          }
+        </div>
+        <span class="rating-value">{{ averageRating | number:'1.1-1' }}</span>
+      </div>
       
       <div class="product-meta">
         <span class="product-category">{{ product.category }}</span>

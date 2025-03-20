@@ -1,0 +1,98 @@
+<div class="reviews-container">
+  <div class="reviews-header">
+    <h2 class="section-title">Reviews & Ratings</h2>
+    <div class="average-rating">
+      <span class="rating-value">{{ averageRating | number:'1.1-1' }}</span>
+      <div class="stars">
+        @for (star of generateRatingArray(getRoundedRating()); track $index) {
+          <fa-icon [icon]="star ? solidStar : regularStar" class="star" [class.filled]="star"></fa-icon>
+        }
+      </div>
+      <span class="review-count">({{ reviews.length }} {{ reviews.length === 1 ? 'review' : 'reviews' }})</span>
+    </div>
+  </div>
+  
+  @if (loading) {
+    <div class="loading-container">
+      <app-loading-spinner [message]="'Loading reviews...'"></app-loading-spinner>
+    </div>
+  } @else {
+    <!-- Add Review Button -->
+    @if (currentUser && !isSeller() && !hasReviewed) {
+      <div class="add-review-button-container">
+        <button class="add-review-btn" (click)="toggleReviewForm()">
+          {{ showReviewForm ? 'Cancel' : 'Write a Review' }}
+        </button>
+      </div>
+    }
+    
+    <!-- Review Form -->
+    @if (showReviewForm) {
+      <div class="review-form">
+        <h3>Write Your Review</h3>
+        
+        <div class="rating-selector">
+          <span class="rating-label">Your Rating:</span>
+          <div class="stars">
+            @for (i of [1, 2, 3, 4, 5]; track i) {
+              <fa-icon 
+                [icon]="i <= newReview.rating ? solidStar : regularStar" 
+                class="star" 
+                [class.filled]="i <= newReview.rating"
+                (click)="setRating(i)"
+              ></fa-icon>
+            }
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="reviewComment">Your Review:</label>
+          <textarea 
+            id="reviewComment" 
+            rows="4" 
+            [(ngModel)]="newReview.comment" 
+            placeholder="Share your experience with this product..."
+          ></textarea>
+        </div>
+        
+        <div class="form-actions">
+          <button 
+            class="submit-btn" 
+            [disabled]="submitting || newReview.comment.trim() === ''" 
+            (click)="submitReview()"
+          >
+            {{ submitting ? 'Submitting...' : 'Submit Review' }}
+          </button>
+        </div>
+      </div>
+    }
+    
+    <!-- Reviews List -->
+    @if (reviews.length === 0) {
+      <div class="no-reviews">
+        <p>No reviews yet. Be the first to review this product!</p>
+      </div>
+    } @else {
+      <div class="reviews-list">
+        @for (review of reviews; track review.id) {
+          <div class="review-item">
+            <div class="review-header">
+              <div class="reviewer-info">
+                <span class="reviewer-name">{{ review.userName }}</span>
+                <span class="review-date">{{ formatDate(review.createdAt) }}</span>
+              </div>
+              <div class="review-rating">
+                @for (star of generateRatingArray(review.rating); track $index) {
+                  <fa-icon [icon]="star ? solidStar : regularStar" class="star" [class.filled]="star"></fa-icon>
+                }
+              </div>
+            </div>
+            <div class="review-content">
+              <p>{{ review.comment }}</p>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

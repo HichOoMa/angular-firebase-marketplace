@@ -1,10 +1,12 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faShoppingCart, faStar, faHeart } from '@fortawesome/free-solid-svg-icons';
+import { faShoppingCart, faStar as fasStar, faHeart } from '@fortawesome/free-solid-svg-icons';
+import { faStar as farStar } from '@fortawesome/free-regular-svg-icons';
 import { Product } from '../../models/product.model';
 import { CartService } from '../../services/cart.service';
+import { ReviewService } from '../../services/review.service';
 
 @Component({
   selector: 'app-product-card',
@@ -13,16 +15,35 @@ import { CartService } from '../../services/cart.service';
   templateUrl: './product-card.component.html',
   styleUrls: ['./product-card.component.scss']
 })
-export class ProductCardComponent {
+export class ProductCardComponent implements OnInit {
   @Input() product!: Product;
   @Input() featured: boolean = false;
   
   private cartService = inject(CartService);
+  private reviewService = inject(ReviewService);
+  
+  averageRating: number = 0;
   
   // Font Awesome icons
   faShoppingCart = faShoppingCart;
-  faStar = faStar;
+  solidStar = fasStar;
+  regularStar = farStar;
   faHeart = faHeart;
+  
+  ngOnInit(): void {
+    this.loadAverageRating();
+  }
+  
+  loadAverageRating(): void {
+    this.reviewService.getAverageRating(this.product.id).subscribe(rating => {
+      this.averageRating = rating;
+    });
+  }
+  
+  // Generate an array of numbers for star rating display
+  generateRatingArray(rating: number): number[] {
+    return Array(5).fill(0).map((_, i) => i < Math.round(rating) ? 1 : 0);
+  }
   
   addToCart(event: Event): void {
     event.preventDefault();

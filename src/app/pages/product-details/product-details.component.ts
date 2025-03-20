@@ -10,6 +10,7 @@ import { Product } from '../../models/product.model';
 import { User } from '../../models/user.model';
 import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
 import { ChatComponent } from '../../components/chat/chat.component';
+import { ReviewComponent } from '../../components/review/review.component';
 
 @Component({
   selector: 'app-product-details',
@@ -19,7 +20,8 @@ import { ChatComponent } from '../../components/chat/chat.component';
     RouterLink,
     FontAwesomeModule,
     LoadingSpinnerComponent,
-    ChatComponent
+    ChatComponent,
+    ReviewComponent
   ],
   templateUrl: './product-details.component.html',
   styleUrls: ['./product-details.component.scss']

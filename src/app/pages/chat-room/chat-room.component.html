@@ -1,0 +1,56 @@
+<div class="chat-room-container">
+  <div class="chat-header">
+    <button class="back-button" (click)="goBack()">
+      <fa-icon [icon]="faArrowLeft"></fa-icon>
+      Back to Messages
+    </button>
+    
+    <div class="chat-info" *ngIf="chatRoom">
+      <h2 class="chat-title">
+        {{ chatRoom.lastMessage?.senderName || 'Chat Room' }}
+      </h2>
+    </div>
+  </div>
+  
+  <div *ngIf="loading" class="loading-container">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+  
+  <div *ngIf="!loading && messages.length === 0" class="no-messages">
+    <p>No messages yet. Start the conversation!</p>
+  </div>
+  
+  <div *ngIf="!loading && messages.length > 0" class="messages-container" #messagesContainer>
+    <div class="messages-list">
+      <ng-container *ngFor="let message of messages; let i = index; let first = first; let last = last">
+        <!-- Date separator -->
+        <div *ngIf="i === 0 || formatDate(messages[i-1].timestamp) !== formatDate(message.timestamp)" class="date-separator">
+          <span class="date">{{ formatDate(message.timestamp) }}</span>
+        </div>
+        
+        <div class="message-wrapper" [class.own-message]="isOwnMessage(message)">
+          <div class="message">
+            <div class="message-content">{{ message.content }}</div>
+            <div class="message-timestamp">{{ formatTimestamp(message.timestamp) }}</div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  
+  <div class="message-input-container">
+    <form (ngSubmit)="sendMessage()" class="message-form">
+      <input 
+        type="text" 
+        [(ngModel)]="newMessage" 
+        name="newMessage" 
+        placeholder="Type a message..." 
+        class="message-input"
+        [disabled]="!currentUser"
+      >
+      <button type="submit" class="send-button" [disabled]="!newMessage.trim() || !currentUser">
+        <fa-icon [icon]="faPaperPlane"></fa-icon>
+      </button>
+    </form>
+  </div>
+</div>

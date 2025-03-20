@@ -21,8 +21,7 @@
       *ngFor="let room of chatRooms" 
       class="chat-room-item"
       [class.unread]="hasUnreadMessages(room)"
-      [routerLink]="['/product', room.productId]"
-      [queryParams]="{chat: room.id}"
+      [routerLink]="['/chat', room.id]"
     >
       <div class="chat-room-avatar">
         <fa-icon [icon]="faEnvelope"></fa-icon>

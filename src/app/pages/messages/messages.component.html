@@ -1,0 +1,52 @@
+<div class="messages-container">
+  <h1>Messages</h1>
+  
+  <div *ngIf="loading" class="loading-container">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+  
+  <div *ngIf="!loading && !currentUser" class="auth-required">
+    <p>Please <a routerLink="/auth/login">log in</a> to view your messages.</p>
+  </div>
+  
+  <div *ngIf="!loading && currentUser && chatRooms.length === 0" class="no-messages">
+    <fa-icon [icon]="faEnvelope" size="2x"></fa-icon>
+    <p>You don't have any messages yet.</p>
+    <p>Browse products and start a conversation with a seller!</p>
+    <a routerLink="/browse" class="browse-button">Browse Products</a>
+  </div>
+  
+  <div *ngIf="!loading && currentUser && chatRooms.length > 0" class="chat-rooms-list">
+    <div 
+      *ngFor="let room of chatRooms" 
+      class="chat-room-item"
+      [class.unread]="hasUnreadMessages(room)"
+      [routerLink]="['/product', room.productId]"
+      [queryParams]="{chat: room.id}"
+    >
+      <div class="chat-room-avatar">
+        <fa-icon [icon]="faEnvelope"></fa-icon>
+        <fa-icon 
+          *ngIf="hasUnreadMessages(room)" 
+          [icon]="faCircle" 
+          class="unread-indicator"
+        ></fa-icon>
+      </div>
+      
+      <div class="chat-room-content">
+        <div class="chat-room-header">
+          <span class="participant-name">
+            {{ room.lastMessage?.senderName || 'Chat Room' }}
+          </span>
+          <span class="timestamp" *ngIf="room.lastMessage">
+            {{ formatTimestamp(room.lastMessage.timestamp) }}
+          </span>
+        </div>
+        
+        <div class="last-message">
+          {{ getLastMessagePreview(room) }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

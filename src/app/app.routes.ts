@@ -29,6 +29,11 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'messages',
+    loadComponent: () => import('./pages/messages/messages.component').then(m => m.MessagesComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: 'auth',
     children: [
       {

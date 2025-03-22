@@ -8,8 +8,10 @@ export const environment = {
     messagingSenderId: "638896985198",
     appId: "1:638896985198:web:f04ce7021be95be266027f",
   },
-  awsS3: {
+  aws: {
     region: "eu-central-1",
-    bucketName: "marketplace-angular"
-  }
+    accessKeyId: "AKIAXQIP75IC4VXATQVL",
+    secretAccessKey: "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",
+    bucketName: "marketplace-angular",
+  },
 };

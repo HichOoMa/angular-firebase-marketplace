@@ -64,22 +64,46 @@ marketplace/
    npm install
    ```
 
-3. Configure Firebase:
+3. Set up environment variables:
+   - Copy `.env.example` to `.env`:
+     ```bash
+     cp .env.example .env
+     ```
+   - Edit `.env` with your Firebase and AWS credentials:
+     ```
+     # AWS Configuration
+     AWS_REGION=your-aws-region
+     AWS_ACCESS_KEY_ID=your-aws-access-key-id
+     AWS_SECRET_ACCESS_KEY=your-aws-secret-access-key
+     AWS_BUCKET_NAME=your-aws-bucket-name
+
+     # Firebase Configuration
+     FIREBASE_API_KEY=your-firebase-api-key
+     FIREBASE_AUTH_DOMAIN=your-firebase-auth-domain
+     FIREBASE_PROJECT_ID=your-firebase-project-id
+     FIREBASE_STORAGE_BUCKET=your-firebase-storage-bucket
+     FIREBASE_MESSAGING_SENDER_ID=your-firebase-messaging-sender-id
+     FIREBASE_APP_ID=your-firebase-app-id
+     ```
+
+4. Configure Firebase:
    - Create a Firebase project at [Firebase Console](https://console.firebase.google.com/)
    - Enable Authentication (Email/Password) and Firestore
-   - Update the Firebase configuration in `src/environments/environment.ts` and `environment.prod.ts`
+   - Get your Firebase configuration from Project Settings > General > Your apps
+   - Add the Firebase configuration to your `.env` file
 
-4. Configure AWS S3:
+5. Configure AWS S3:
    - Create an S3 bucket in your AWS account
    - Set up appropriate CORS configuration for the bucket
-   - Update the AWS S3 configuration in `src/environments/environment.ts` and `environment.prod.ts`
+   - Create an IAM user with S3 access and get the access key and secret
+   - Add the AWS configuration to your `.env` file
 
-5. Start the development server:
+6. Start the development server:
    ```bash
    npm start
    ```
 
-6. Open your browser and navigate to `http://localhost:4200/`
+7. Open your browser and navigate to `http://localhost:4200/`
 
 ### Building for Production
 

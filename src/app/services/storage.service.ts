@@ -8,14 +8,23 @@ import { environment } from "../../environments/environment";
 })
 export class StorageService {
   private s3: AWS.S3;
-  private bucketName = ""; // Replace with your actual bucket name
+  private bucketName: string;
 
   constructor() {
     // Initialize AWS S3
+    const region = environment.aws.region || '';
+    const accessKeyId = environment.aws.accessKeyId || '';
+    const secretAccessKey = environment.aws.secretAccessKey || '';
+    this.bucketName = environment.aws.bucketName || '';
+
+    if (!region || !accessKeyId || !secretAccessKey || !this.bucketName) {
+      console.error('AWS configuration is incomplete. Check your environment variables.');
+    }
+
     AWS.config.update({
-      region: environment.aws.region,
-      accessKeyId: environment.aws.accessKeyId,
-      secretAccessKey: environment.aws.secretAccessKey,
+      region,
+      accessKeyId,
+      secretAccessKey,
     });
 
     this.s3 = new AWS.S3();

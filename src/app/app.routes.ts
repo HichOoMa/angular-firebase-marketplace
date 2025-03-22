@@ -51,6 +51,10 @@ export const routes: Routes = [
       }
     ]
   },
+  {
+    path: 'env-test',
+    loadComponent: () => import('./components/env-test/env-test.component').then(m => m.EnvTestComponent)
+  },
   // Admin routes would be implemented in a real application
   {
     path: '**',
